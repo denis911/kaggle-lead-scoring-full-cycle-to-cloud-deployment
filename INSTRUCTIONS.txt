@@ -1,0 +1,257 @@
+INSTRUCTIONS.txt
+
+Purpose
+This file defines agent behavior, execution stages, technology constraints, and validation checkpoints for implementing the ML project described in TASK.txt.
+Agents must treat this file as the authoritative guide for “how to execute the task safely and correctly”.
+
+General Agent Principles
+-- Follow all rules defined in AGENTS.md
+-- Work incrementally and stage-by-stage
+-- Do not skip stages
+-- Do not mix exploratory work with production code
+-- Prefer explicit, readable solutions over clever abstractions
+-- Each stage must produce concrete artifacts before moving forward
+-- If a stage cannot be completed, stop and report clearly what is missing
+
+Execution Model
+Agents must follow a linear, stage-gated workflow:
+
+Stage 0 → Project initialization - done by me already
+Stage 1 → Data acquisition and validation - done by me already
+Stage 2 → Exploratory analysis and experimentation (notebook only)
+Stage 3 → Model selection and hyperparameter finalization
+Stage 4 → Production training code
+Stage 5 → Inference service
+Stage 6 → Local production testing
+Stage 7 → Dockerization
+Stage 8 → Cloud deployment (Render.com)
+Stage 9 → Documentation finalization
+
+Agents must not work on a later stage before the previous one is complete and verified.
+As stages 0 and 1 are done by me already, the agent must start from stage 2.    
+
+Stage 2: Exploratory Data Analysis (Notebook Only)
+
+Goal
+Understand data, features, and modeling challenges.
+
+Instructions
+-- Work exclusively inside notebook.ipynb
+-- Perform:
+    - Data cleaning experiments
+    - Missing value analysis
+    - Categorical feature inspection
+    - Target imbalance analysis
+    - Correlation and feature relevance exploration
+    - Use visualizations where appropriate
+-- Document all decisions in markdown cells
+
+Constraints
+-- No production code
+-- No copying notebook code into scripts
+-- Notebook is for reasoning, not deployment
+
+Exit Criteria
+-- Clear understanding of:
+    - Required preprocessing steps
+    - Candidate feature encodings
+    - Suitable model families
+-- Notebook explains “why”, not just “what”
+
+Tips: 
+-- Document data source and retrieval steps right in the notebook cells for simplicity.
+-- Explore distributions, missing values, correlations, outliers.
+-- Feature-engineer only what's necessary — keep it interpretable.
+-- Keep preprocessing steps reproducible (functions or scripts).
+
+Stage 3: Model Selection and Hyperparameter Finalization
+
+Goal
+Select the final model and freeze hyperparameters.
+
+Instructions
+-- Evaluate at least:
+    - One linear classifier (e.g. Logistic Regression)
+    - One tree-based sklearn model (e.g. RandomForest, GradientBoosting)
+    - One XGBoost classifier
+-- Use appropriate metrics (ROC-AUC, F1, precision/recall)
+-- Perform hyperparameter tuning (GridSearch or RandomizedSearch)
+-- Compare models objectively
+-- Select one final model and fixed hyperparameters
+
+Constraints
+-- All experimentation stays in the notebook
+-- Do not prematurely optimize
+-- Avoid data leakage
+
+Exit Criteria
+-- One final model chosen
+-- Hyperparameters explicitly listed
+-- Feature preprocessing steps finalized and documented
+
+Tips:
+-- Start with a baseline (Logistic/Linear model or shallow tree).
+-- Train at least 3 models, tune key hyperparameters, and select the best.
+-- Use cross-validation and keep a summary table of scores.
+-- Avoid data leakage — don't include target-derived features.  
+
+Stage 4: Production Training Code (train.py)
+
+Goal
+Convert notebook conclusions into clean, reusable training code.
+
+Instructions
+-- Implement:
+    - Data loading
+    - Data preprocessing
+    - Model training using frozen hyperparameters
+    - Model evaluation
+    - Model serialization (pickle or joblib)
+-- Use sklearn-compatible pipelines if appropriate
+-- Ensure reproducibility with fixed random seeds
+-- Include logging and error handling
+
+Constraints
+-- No notebook dependencies
+-- No visualization
+-- No hyperparameter tuning
+
+Exit Criteria
+-- train.py runs end-to-end from CLI
+-- Model artifact is saved successfully
+-- Results match notebook conclusions
+
+Tips: 
+Refactor your final notebook into:
+train.py      # trains model and saves artifact
+predict.py    # loads model, runs inference
+serve.py      # starts web service
+
+
+Stage 5: Inference Service (FastAPI)
+
+Goal
+Expose the trained model via a production-ready API.
+
+Instructions
+-- Implement predict.py using FastAPI
+-- Load the trained model at startup
+-- Define:
+    - Input schema using Pydantic
+    - Output schema
+    - Provide a /predict endpoint
+    - Return predictions as JSON
+-- Include basic validation and error handling
+
+Constraints
+-- No training logic
+-- No heavy computation at request time
+
+Exit Criteria
+-- API starts successfully
+-- Model loads correctly
+-- Sample requests return valid predictions
+
+Tips:
+Implement a FastAPI app exposing:
+POST /predict – accepts JSON input, returns prediction
+GET /health – simple 200 OK check
+Provide an example request in the README:
+curl -X POST -H "Content-Type: application/json" \
+     -d '{"feature1": 3.2, "feature2": "A"}' \
+     http://localhost:9696/predict
+
+
+Stage 6: Local Production Testing
+
+Goal
+Test the service in a production-like environment.
+
+Instructions
+-- Run FastAPI using:
+    - Gunicorn with Uvicorn workers
+-- Validate:
+    - Startup time
+    - Multiple concurrent requests
+    - Error handling
+-- Confirm environment variables and ports
+
+Exit Criteria
+-- Service runs without reload mode
+-- Requests succeed consistently
+-- No development-only settings remain
+
+
+Stage 7: Dockerization
+
+Goal
+Create a production-ready container.
+
+Instructions
+-- Write a Dockerfile that:
+    - Uses a lightweight Python base image
+    - Installs dependencies
+    - Copies code and model artifact
+    - Runs the FastAPI app via Gunicorn
+    - Expose the correct port
+-- Test the container locally
+
+Constraints
+-- No unnecessary build tools
+-- No secrets baked into the image
+
+Exit Criteria
+-- Docker image builds successfully
+-- Container runs and serves predictions locally
+
+Tips:
+Include a working Dockerfile, e.g.:
+
+FROM python:3.11-slim
+WORKDIR /app
+COPY . .
+RUN pip install -r requirements.txt
+EXPOSE 9696
+CMD ["python", "serve.py"]
+
+Add build/run instructions:
+
+docker build -t myproject .
+docker run -it -p 9696:9696 myproject
+
+Stage 8: Cloud Deployment (Render.com)
+-- I will do it manually - Render.com will take docker container from github and deploy it.
+
+Stage 9: Documentation Finalization
+
+Goal
+Make the project reproducible by third parties.
+
+Instructions
+Update README.md with:
+-- Project overview
+-- End-to-end workflow
+-- Local setup instructions
+-- Training instructions
+-- Docker build and run instructions
+-- Deployment steps on Render.com
+-- API usage examples
+
+Ensure instructions assume a clean machine  
+
+Exit Criteria
+-- A third party can reproduce the project using README alone
+-- No undocumented steps remain
+
+Stopping Rules
+Agents must stop execution if:
+-- A stage fails validation
+-- External access would violate AGENTS.md
+
+Requirements in TASK.txt conflict with implementation
+
+Completion Criteria
+-- The task is complete only when:
+-- All stages are finished in order
+-- All exit criteria are satisfied
+-- Code, documentation, and deployment are consistent
