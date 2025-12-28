@@ -1,0 +1,110 @@
+TASK.txt
+
+Objective
+Build an end-to-end machine learning project for lead conversion prediction using the Lead Scoring Dataset from Kaggle. The project must cover data ingestion, exploratory analysis, feature engineering, model training, evaluation, packaging, and deployment as a prediction service.
+
+Business Problem
+Given historical lead data, predict whether a lead will convert (binary classification). The goal is to build a reproducible ML pipeline and a deployable prediction service suitable for production demonstration.
+
+Dataset
+Source: Kaggle Lead Scoring Dataset
+URL: https://www.kaggle.com/datasets/amritachatterjee09/lead-scoring-dataset/data
+
+The dataset contains customer interaction and demographic features with a target variable indicating lead conversion.
+
+The project must:
+-- Include the dataset in the repository
+
+Project Structure Requirements
+The repository must contain the following artifacts:
+
+README.md
+Must include:
+-- Clear description of the problem and business context
+-- High-level explanation of the ML approach
+-- Exact instructions to run training and inference locally
+-- Instructions to build and run the Docker container
+-- Description of the deployed service and how to query it
+-- Deployment URL (placeholder allowed if deployment is not executed automatically)
+
+Data
+-- Raw dataset
+-- Any derived datasets must be generated programmatically, not manually edited
+
+notebook.ipynb
+The notebook must include:
+-- Data loading and validation
+-- Data cleaning and preprocessing
+-- Exploratory Data Analysis (EDA)
+-- Feature importance or feature relevance analysis
+-- Model comparison and selection
+-- Hyperparameter tuning experiments
+-- Clear markdown explanations of decisions and findings
+
+train.py
+A standalone training script that:
+-- Loads and preprocesses data
+-- Trains the selected final model
+-- Evaluates the model using appropriate metrics
+-- Saves the trained model artifact to disk
+-- Uses reproducible random seeds
+-- Can be executed from the command line
+
+predict.py
+A prediction service that:
+-- Loads the trained model
+-- Exposes a REST API endpoint for inference
+-- Accepts JSON input
+-- Returns predictions in JSON format
+-- Runs using FastAPI + UV + Gunicorn/uvicorn 
+-- Includes basic input validation and error handling
+
+Dependency Management
+Provide the following:
+-- requirements.txt
+-- pyproject.toml
+
+Dependencies must be minimal and justified.
+
+Dockerfile
+-- Builds a container that runs the prediction service
+-- Exposes the correct port
+-- Uses a lightweight base image
+-- Can be built and run with standard Docker commands
+
+Deployment
+-- The service must be deployable to a cloud or local container runtime
+-- Provide a deployment URL or clear instructions for local deployment
+
+Infrastructure-as-code is optional but encouraged
+
+Modeling Requirements
+-- Treat the problem as supervised binary classification
+-- Handle missing values appropriately
+-- Encode categorical variables properly
+-- Prevent data leakage
+-- Use at least 2 baseline models - linear and tree based - and one more advanced model - XGBoost
+-- Justify the final model choice using metrics and analysis
+-- Track and report metrics such as accuracy, precision, recall, F1, ROC-AUC (as appropriate)
+
+Reproducibility Requirements
+-- All steps must be reproducible from a clean environment
+-- No manual steps outside documented commands
+-- Fixed random seeds where applicable
+-- Clear separation between experimentation (notebook) and production code (scripts)
+
+Agent Execution Expectations
+-- Agents must decompose the work into logical, reviewable steps
+-- Agents must not access external resources beyond what is explicitly permitted
+-- Agents must generate clean, readable, well-documented code
+-- Agents must prioritize correctness, clarity, and reproducibility over optimization
+-- Any ambiguity must be resolved by making reasonable, documented assumptions
+
+Definition of Done
+-- The task is complete when:
+-- The repository structure matches the requirements
+-- Training can be executed end-to-end via train.py
+-- The prediction service can be started and queried
+-- The project can be understood and run by a third party using only the README
+-- All artifacts are consistent, documented, and reproducible
+
