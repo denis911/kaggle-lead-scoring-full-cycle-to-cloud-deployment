@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "fastapi>=0.128.0",
     "jupyter>=1.1.1",
     "matplotlib>=3.10.8",
     "notebook>=7.5.1",
@@ -13,6 +14,7 @@ dependencies = [
     "scikit-learn>=1.8.0",
     "seaborn>=0.13.2",
     "tqdm>=4.67.1",
+    "uvicorn>=0.40.0",
     "xgboost>=3.1.2",
     "yellowbrick>=1.5",
 ]
