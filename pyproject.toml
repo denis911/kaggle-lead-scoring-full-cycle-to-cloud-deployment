@@ -14,4 +14,5 @@ dependencies = [
     "seaborn>=0.13.2",
     "tqdm>=4.67.1",
     "xgboost>=3.1.2",
+    "yellowbrick>=1.5",
 ]
