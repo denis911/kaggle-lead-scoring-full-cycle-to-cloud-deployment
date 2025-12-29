@@ -23,34 +23,26 @@ except Exception as e:
     logger.error(f"Failed to load model: {e}")
     raise RuntimeError(f"Could not load model at {MODEL_PATH}")
 
-class LeadData(BaseModel):
-    Lead_Origin: str
-    Lead_Source: Optional[str] = "Unknown"
-    Do_Not_Email: str
-    TotalVisits: float
-    Total_Time_Spent_on_Website: float
-    Page_Views_Per_Visit: float
-    Last_Activity: Optional[str] = "Unknown"
-    Country: Optional[str] = "Unknown"
-    Specialization: Optional[str] = "Unknown"
-    What_is_your_current_occupation: Optional[str] = "Unknown"
-    City: Optional[str] = "Unknown"
-    A_free_copy_of_Mastering_The_Interview: str
-    Last_Notable_Activity: str
+from pydantic import BaseModel, Field
 
-    class Config:
-        # Map snake_case or spaces to the exact model feature names
-        fields = {
-            "Lead_Origin": "Lead Origin",
-            "Lead_Source": "Lead Source",
-            "Do_Not_Email": "Do Not Email",
-            "Total_Time_Spent_on_Website": "Total Time Spent on Website",
-            "Page_Views_Per_Visit": "Page Views Per Visit",
-            "Last_Activity": "Last Activity",
-            "What_is_your_current_occupation": "What is your current occupation",
-            "A_free_copy_of_Mastering_The_Interview": "A free copy of Mastering The Interview",
-            "Last_Notable_Activity": "Last Notable Activity"
-        }
+class LeadData(BaseModel):
+    Lead_Origin: str = Field(alias="Lead Origin")
+    Lead_Source: Optional[str] = Field("Unknown", alias="Lead Source")
+    Do_Not_Email: str = Field(alias="Do Not Email")
+    TotalVisits: float
+    Total_Time_Spent_on_Website: float = Field(alias="Total Time Spent on Website")
+    Page_Views_Per_Visit: float = Field(alias="Page Views Per Visit")
+    Last_Activity: Optional[str] = Field("Unknown", alias="Last Activity")
+    Country: Optional[str] = Field("Unknown")
+    Specialization: Optional[str] = Field("Unknown")
+    What_is_your_current_occupation: Optional[str] = Field("Unknown", alias="What is your current occupation")
+    City: Optional[str] = Field("Unknown")
+    A_free_copy_of_Mastering_The_Interview: str = Field(alias="A free copy of Mastering The Interview")
+    Last_Notable_Activity: str = Field(alias="Last Notable Activity")
+
+    model_config = {
+        "populate_by_name": True
+    }
 
 def consolidate_categories(df: pd.DataFrame) -> pd.DataFrame:
     """Duplicate the consolidation logic from train.py to ensure parity."""
