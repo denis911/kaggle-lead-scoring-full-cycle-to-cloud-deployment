@@ -1,0 +1,13 @@
+.venv
+__pycache__
+*.pyc
+.ipynb_checkpoints
+.git
+.gitignore
+Lead Scoring.csv
+EDA.ipynb
+test_api.py
+local_test.py
+brain/
+.agent/
+*.joblib.tmp
